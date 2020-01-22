@@ -269,11 +269,7 @@ end
 procedure destroy_p_proc begin
 
 /* Increment the aligned critter counter*/
-
-   //inc_good_critter
-   //inc_evil_critter --comment out
-
-   inc_neutral_critter // added by killap
+   inc_neutral_critter
 
    //added by killap
    if (merk_seed_status(MSS_KILL_SKEETER)) then begin

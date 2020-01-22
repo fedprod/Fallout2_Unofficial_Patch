@@ -32,8 +32,6 @@ end
 procedure destroy_p_proc begin
 
 /* Increment the aligned critter counter*/
-//   inc_evil_critter
-
    if (cur_map_index == MAP_BH_RND_DESERT) then begin
        dec_map_var(MVAR_Hostile_Total);
    end
