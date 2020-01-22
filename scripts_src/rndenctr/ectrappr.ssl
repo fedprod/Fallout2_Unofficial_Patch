@@ -132,7 +132,6 @@ procedure talk_p_proc begin
 end
 
 procedure destroy_p_proc begin
-   //inc_evil_critter
    inc_neutral_critter //edit by killap
 end
 
