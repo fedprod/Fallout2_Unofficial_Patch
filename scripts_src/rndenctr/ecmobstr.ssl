@@ -134,14 +134,6 @@ end
    written by designers are placed in here. Additionally, Reactions are generated and
    stored which affects player interactions. */
 procedure talk_p_proc begin
-/*   Evil_Critter:=0;
-   Slavery_Tolerant:=SLAVE_TOLERANT;
-   Karma_Perception:=KARMA_PERCEPTION1;
-
-   CheckKarma;
-
-   GetReaction;
-*/
    if (dude_is_made_man) then begin
        call Node001;
    end

@@ -203,8 +203,7 @@ procedure talk_p_proc begin
    drinks_this_conversation := 0; //added by killap
    giving_drinks := 0; //added by killap
    script_overrides;
-   //Evil_Critter:=1;
-   Evil_Critter:=0; //edit by killap
+   Evil_Critter:=0;
    Slavery_Tolerant:=SLAVE_INTOLERANT;
    Karma_Perception:=KARMA_PERCEPTION8;
    CheckKarma;
@@ -212,8 +211,6 @@ procedure talk_p_proc begin
    ReactToLevel; //added by killap
    if ((hostile) or (has_rep_childkiller)) then begin
       call Node015;
-      //set_hostile; --comment out by killap
-      //self_attack_dude; --comment out by killap
    end else if (player_has_destroyed_still) then begin
       if (node_27) then begin
          call Node026;

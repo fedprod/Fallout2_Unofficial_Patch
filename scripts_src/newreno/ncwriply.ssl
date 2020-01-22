@@ -283,7 +283,7 @@ procedure talk_p_proc begin
    end else if (dude_wearing_power_armor) then begin
       call Node005;
    end else begin
-      Evil_Critter:=0; //edit by killap - was 1
+      Evil_Critter:=0;
       Slavery_Tolerant := SLAVE_VERY_INTOLERANT;
       Karma_Perception := KARMA_PERCEPTION5;
       CheckKarma;
