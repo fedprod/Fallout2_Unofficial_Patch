@@ -175,14 +175,6 @@ end
    written by designers are placed in here. Additionally, Reactions are generated and
    stored which affects player interactions. */
 procedure talk_p_proc begin
-//   Evil_Critter:=0;
-//   Slavery_Tolerant:=SLAVE_TOLERANT;
-//   Karma_Perception:=KARMA_PERCEPTION1;
-
-//   CheckKarma;
-
-//   GetReaction;
-
    call Node001;
 end
 
@@ -190,12 +182,6 @@ end
    incrementing the death count for reputation purposes and Enemy Counters are placed
    in here. */
 procedure destroy_p_proc begin
-   //variable obj;
-
-   //obj := obj_carrying_pid_obj(self_obj, PID_STIMPAK);
-   //if (obj) then begin
-    //  destroy_object(obj);
-   //end
    set_stranger_flag(STRANGER_DEAD);
 /* Increment the aligned critter counter*/
    inc_good_critter
