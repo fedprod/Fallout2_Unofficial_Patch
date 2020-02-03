@@ -83,9 +83,12 @@ procedure effective_rep begin
   return rep;
 end
 
+// Allows to check both negative and positive titles sanely.
 // Original sometimes checks > vs >=, I think it's a typo. Either you have the title, or not.
 procedure has_title(variable title) begin
-  if effective_rep >= title then return true;
+  variable rep := effective_rep;
+  if title >= 0 and rep >= title then return true;
+  if title < 0 and rep <= title then return true;
   return false;
 end
 
