@@ -206,7 +206,7 @@ procedure talk_p_proc begin
       call Node003;
    end else if (san_fran_flag(SF_DRAGON_DEAD)) then begin
       call Node004;
-   end else if (check_general_rep < KARMA_DEFENDER) then begin
+   end else if (not has_title(KARMA_DEFENDER)) then begin
       call Node002;
    end else if (san_fran_flag(SF_LEE_DEAD)) then begin
       call Node005;
