@@ -92,7 +92,7 @@ procedure has_title(variable title) begin
   return false;
 end
 
-#define rep_positive (effective_rep >= 0) // ok, "almost positive". Same reasoning as above.
+#define rep_positive (effective_rep >= 0) // ok, "almost positive". In line with has_title.
 #define rep_negative (effective_rep < 0)
 
 
