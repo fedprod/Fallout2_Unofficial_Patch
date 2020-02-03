@@ -225,7 +225,7 @@ procedure Node996 begin
    end
 end
 procedure Node995 begin
-   if ( (global_var(TOWN_REP_VAR) < 0) or (global_var(TOWN_REP_VAR) <= KARMA_SWORD_OF_DESPAIR) ) then begin
+   if global_var(TOWN_REP_VAR) < 0 then begin
       call Node017;
    end else if (global_var(TOWN_REP_VAR) == 0) then begin
       call Node018;
