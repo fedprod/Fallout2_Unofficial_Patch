@@ -38,19 +38,19 @@
 #define STATE_INACTIVE                  (1)
 #endif
 #ifndef STATE_WOOD
-#define STATE_WOOD                      (1)
+#define STATE_WOOD                      (0)
 #endif
 #ifndef STATE_METAL
-#define STATE_METAL                     (0)
+#define STATE_METAL                     (1)
 #endif
 #ifndef STATE_NON_DESTROY
-#define STATE_NON_DESTROY               (0)
+#define STATE_NON_DESTROY               (2)
 #endif
 #ifndef STATE_STANDARD_LOCK
 #define STATE_STANDARD_LOCK             (0)
 #endif
 #ifndef STATE_ELECTRIC_LOCK
-#define STATE_ELECTRIC_LOCK             (0)
+#define STATE_ELECTRIC_LOCK             (1)
 #endif
 
 /* Sets whether the door is locked or trapped */
@@ -235,6 +235,7 @@ end
    need to be in the description_p_proc procedure.
 ***************************************************************************/
 
+#ifndef custom_look_at_p_proc
 procedure look_at_p_proc begin
    script_overrides;
 
@@ -246,6 +247,7 @@ procedure look_at_p_proc begin
        display_msg(mstr(101));
    end
 end
+#endif
 
 
 /**********************************************************************************
