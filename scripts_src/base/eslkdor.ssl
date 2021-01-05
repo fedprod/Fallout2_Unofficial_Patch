@@ -1,15 +1,7 @@
 /* Include Files */
 #define SCRIPT_REALNAME "eslkdor"
 
-/* Door States */
-#define STATE_ACTIVE                    (0)
-#define STATE_INACTIVE                  (1)
-#define STATE_WOOD                      (0)
-#define STATE_METAL                     (1)
-#define STATE_NON_DESTROY               (2)
-#define STATE_STANDARD_LOCK             (0)
-#define STATE_ELECTRIC_LOCK             (1)
-
+#define Lock_Bonus                      (-50)
 #define Lockpick_Exp                    EXP_LOCKPICK_NEG_30
 
 #include "../template/gdoor.ssl"
