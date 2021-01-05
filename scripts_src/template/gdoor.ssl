@@ -27,6 +27,7 @@
 #endif
 
 #include "../headers/command.h"
+#include "../headers/doors.h"
 
 /* Defines and Macros */
 
@@ -110,6 +111,10 @@
 #endif
 #ifndef Traps_Exp
 #define Traps_Exp                       EXP_TRAPS_NORMAL
+#endif
+
+#ifndef call_anger
+#define call_anger // gsrdoor
 #endif
 
 /* Standard Script Procedures */
@@ -299,6 +304,7 @@ procedure use_skill_on_p_proc begin
        else begin
            call Set_Lock;
        end
+       call_anger
    end                                                          // End of Skill_Lockpick
 
    else if (Skill_Used == SKILL_TRAPS) then begin
@@ -325,7 +331,7 @@ end
    made to find out what is being used, obj_pid(obj_being_used_with) will need to
    be checked against a prototype.
 **********************************************************************************/
-
+#ifndef custom_use_obj_on_p_proc
 procedure use_obj_on_p_proc begin
    variable Tool;
 
@@ -382,7 +388,7 @@ procedure use_obj_on_p_proc begin
    end
 
 end
-
+#endif
 
 /******************************************************************************************
    Should the door sustain damage from anything (ie, dynamite, plastic explosives, rockets,
@@ -1210,21 +1216,7 @@ procedure Disarm_Traps begin
        call Damage_Critter;
    end
 
-   else begin
-       if (local_var(LVAR_Found_Trap) == 0) then begin
-           if (source_obj == dude_obj) then begin
-               display_msg(mstr(195));
-           end
-
-           else begin
-               display_msg(obj_name(source_obj)+mstr(200));
-           end
-       end
-
-       else begin
-           display_msg(obj_name(source_obj)+mstr(202));
-       end
-   end
+   else call trap_search_result(LVAR_Found_Trap, source_obj);
 end
 
 
