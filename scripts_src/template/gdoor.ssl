@@ -53,6 +53,12 @@
 #ifndef STATE_ELECTRIC_LOCK
 #define STATE_ELECTRIC_LOCK             (1)
 #endif
+#ifndef STATE_DOOR_CLOSE
+#define STATE_DOOR_CLOSE                (1)
+#endif
+#ifndef STATE_DOOR_NOCLOSE
+#define STATE_DOOR_NOCLOSE              (0)
+#endif
 
 /* Sets whether the door is locked or trapped */
 #ifndef LOCKED_STATUS
@@ -67,6 +73,10 @@
 #ifndef LOCK_STATUS
 #define LOCK_STATUS                     STATE_STANDARD_LOCK
 #endif
+#ifndef CLOSE_STATUS
+#define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
+#endif
+
 /* Penalties for Lock difficulty based on whether or not you are using lockpicks. */
 #ifndef Lock_Bonus
 #define Lock_Bonus                      (0)
@@ -175,7 +185,9 @@ procedure Super_Set_Lockpick_Lock;
 
 variable Locks_Roll;
 variable Traps_Roll;
-
+#ifdef TIMER_CLOSE
+variable last_source_obj;
+#endif
 
 /*******************************************************************
 *******                         PROCEDURES                   *******
@@ -190,6 +202,25 @@ variable Traps_Roll;
 
 procedure start begin
 end
+
+#ifdef TIMER_CLOSE
+procedure timed_event_p_proc begin
+    if (obj_is_open(self_obj)) then begin
+       if not combat_is_initialized then begin
+          if ((tile_distance_objs(dude_obj, self_obj) > DOOR_CLOSE_DIST) and
+              (checkPartyMembersNearDoor == false) and
+              ((tile_distance_objs(self_obj, last_source_obj) > DOOR_CLOSE_DIST) or
+               (critter_state(last_source_obj) == CRITTER_IS_DEAD))) then begin
+             obj_close(self_obj);
+          end else begin
+             add_timer_event(self_obj, 10, TIMER_CLOSE);
+          end
+       end else begin
+          add_timer_event(self_obj, 10, TIMER_CLOSE);
+       end
+    end
+end
+#endif
 
 /********************************************************************
    Any time that a critter tries to use this door will call this
@@ -232,6 +263,13 @@ procedure use_p_proc begin
        script_overrides;
        display_msg(mstr(203));
    end
+
+   #ifdef TIMER_CLOSE
+   if (CLOSE_STATUS == STATE_DOOR_CLOSE) then begin
+      last_source_obj := source_obj;
+      add_timer_event(self_obj, 10, TIMER_CLOSE);
+   end
+   #endif
 end
 
 /***************************************************************************
