@@ -1,8 +1,15 @@
-/*
-	Copyright 1998-2003 Interplay Entertainment Corp.  All rights reserved.
-*/
+#define SCRIPT_REALNAME "nibasdor"
 
 #define LOCKED_STATUS                   STATE_ACTIVE
+#define TRAPPED_STATUS                  STATE_INACTIVE
+#define DOOR_STATUS                     STATE_METAL
+#define LOCK_STATUS                     STATE_STANDARD_LOCK
+#define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
 
-#include "../generic/zimtldor.ssl"
-#include "../headers/newreno.h"
+#define Lock_Bonus                      (-20)
+
+#define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
+#define DOOR_CLOSE_DIST                 (3)
+#define TIMER_CLOSE                     (1)
+
+#include "../template/gdoor.ssl"
