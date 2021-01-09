@@ -23,4 +23,6 @@ procedure trap_search_result(variable found_trap, variable who) begin
    end
 end
 
+#define self_locked (obj_is_locked(self_obj))
+
 #endif // DOORS_H

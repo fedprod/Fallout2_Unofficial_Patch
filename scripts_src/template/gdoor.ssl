@@ -32,33 +32,15 @@
 /* Defines and Macros */
 
 /* Door States */
-#ifndef STATE_ACTIVE
 #define STATE_ACTIVE                    (0)
-#endif
-#ifndef STATE_INACTIVE
 #define STATE_INACTIVE                  (1)
-#endif
-#ifndef STATE_WOOD
 #define STATE_WOOD                      (0)
-#endif
-#ifndef STATE_METAL
 #define STATE_METAL                     (1)
-#endif
-#ifndef STATE_NON_DESTROY
 #define STATE_NON_DESTROY               (2)
-#endif
-#ifndef STATE_STANDARD_LOCK
 #define STATE_STANDARD_LOCK             (0)
-#endif
-#ifndef STATE_ELECTRIC_LOCK
 #define STATE_ELECTRIC_LOCK             (1)
-#endif
-#ifndef STATE_DOOR_CLOSE
 #define STATE_DOOR_CLOSE                (1)
-#endif
-#ifndef STATE_DOOR_NOCLOSE
 #define STATE_DOOR_NOCLOSE              (0)
-#endif
 
 /* Sets whether the door is locked or trapped */
 #ifndef LOCKED_STATUS
@@ -127,6 +109,16 @@
 #define call_anger // gsrdoor
 #endif
 
+
+/* Door close distance */
+/* How far do you want the last object that used the door to get away before it closes */
+#ifndef DOOR_CLOSE_DIST
+#define DOOR_CLOSE_DIST                 (3)
+#endif
+/* Timer id's */
+// #define TIMER_CLOSE                     (1) // defined in each script separately
+
+
 /* Standard Script Procedures */
 procedure start;
 procedure use_p_proc;
@@ -162,17 +154,17 @@ procedure Super_Set_Lockpick_Lock;
    prepended by LVAR_
 *****************************************************************/
 
-#define LVAR_Locked                     (0)
-#define LVAR_Trapped                    (1)
-#define LVAR_Found_Trap                 (2)
-#define LVAR_Set_Door_Status            (3)
-#define LVAR_Explosion_Attempts         (4)
-#define LVAR_Gave_Locks_XP              (5)
-#define LVAR_Gave_Traps_XP              (6)
+#define LVAR_Trapped                    (0)
+#define LVAR_Found_Trap                 (1)
+#define LVAR_Set_Door_Status            (2)
+#define LVAR_Explosion_Attempts         (3)
+#define LVAR_Gave_Locks_XP              (4)
+#define LVAR_Gave_Traps_XP              (5)
 
 
 /*******************************************************************
-   Imported variables from the Map scripts. These should only be
+
+Imported variables from the Map scripts. These should only be
    pointers and variables that need not be saved. If a variable
    Needs to be saved, make it a map variable (MVAR_)
 *******************************************************************/
@@ -205,20 +197,20 @@ end
 
 #ifdef TIMER_CLOSE
 procedure timed_event_p_proc begin
-    if (obj_is_open(self_obj)) then begin
-       if not combat_is_initialized then begin
-          if ((tile_distance_objs(dude_obj, self_obj) > DOOR_CLOSE_DIST) and
-              (checkPartyMembersNearDoor == false) and
-              ((tile_distance_objs(self_obj, last_source_obj) > DOOR_CLOSE_DIST) or
-               (critter_state(last_source_obj) == CRITTER_IS_DEAD))) then begin
-             obj_close(self_obj);
-          end else begin
-             add_timer_event(self_obj, 10, TIMER_CLOSE);
-          end
-       end else begin
-          add_timer_event(self_obj, 10, TIMER_CLOSE);
-       end
+  if (obj_is_open(self_obj)) then begin
+    if not combat_is_initialized then begin
+      if ((tile_distance_objs(dude_obj, self_obj) > DOOR_CLOSE_DIST) and
+        (checkPartyMembersNearDoor == false) and
+        ((tile_distance_objs(self_obj, last_source_obj) > DOOR_CLOSE_DIST) or
+        (critter_state(last_source_obj) == CRITTER_IS_DEAD))) then begin
+          obj_close(self_obj);
+      end else begin
+        add_timer_event(self_obj, 10, TIMER_CLOSE);
+      end
+    end else begin
+      add_timer_event(self_obj, 10, TIMER_CLOSE);
     end
+  end
 end
 #endif
 
@@ -264,8 +256,9 @@ procedure use_p_proc begin
        display_msg(mstr(203));
    end
 
+   // only non-wooden door with timer close
    #ifdef TIMER_CLOSE
-   if (CLOSE_STATUS == STATE_DOOR_CLOSE) then begin
+   if (CLOSE_STATUS == STATE_DOOR_CLOSE) and (DOOR_STATUS != STATE_WOOD) then begin
       last_source_obj := source_obj;
       add_timer_event(self_obj, 10, TIMER_CLOSE);
    end
@@ -301,7 +294,7 @@ end
 
 procedure description_p_proc begin
    script_overrides;
-   if ((local_var(LVAR_Locked) == STATE_ACTIVE) and (local_var(LVAR_Trapped) == STATE_ACTIVE)) then begin
+   if (self_locked and (local_var(LVAR_Trapped) == STATE_ACTIVE)) then begin
        call Look_Traps_And_Locks;
    end
 
@@ -309,7 +302,7 @@ procedure description_p_proc begin
        call Look_Traps;
    end
 
-   else if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+   else if self_locked then begin
        call Look_Locks;
    end
 
@@ -336,7 +329,7 @@ procedure use_skill_on_p_proc begin
 
    if (Skill_Used == SKILL_LOCKPICK) then begin
        script_overrides; //added by killap
-       if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+       if self_locked then begin
            call Unlock_Lock;
        end
        else begin
@@ -378,7 +371,7 @@ procedure use_obj_on_p_proc begin
    if (LOCK_STATUS == STATE_STANDARD_LOCK) then begin
        if (Tool == PID_LOCKPICKS) then begin
            script_overrides; //added by killap
-           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+           if self_locked then begin
                call Lockpick_Lock;
            end
            else begin
@@ -386,7 +379,7 @@ procedure use_obj_on_p_proc begin
            end
        end else if (Tool == PID_EXP_LOCKPICK_SET) then begin
            script_overrides; //added by killap
-           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+           if self_locked then begin
                call Super_Lockpick_Lock;
            end
            else begin
@@ -398,7 +391,7 @@ procedure use_obj_on_p_proc begin
    else if (LOCK_STATUS == STATE_ELECTRIC_LOCK) then begin
        if (Tool == PID_ELECTRONIC_LOCKPICKS) then begin
            script_overrides; //added by killap
-           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+           if self_locked then begin
                call Lockpick_Lock;
            end
            else begin
@@ -406,7 +399,7 @@ procedure use_obj_on_p_proc begin
            end
        end else if (Tool == PID_ELEC_LOCKPICK_MKII) then begin
            script_overrides; //added by killap
-           if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
+           if self_locked then begin
                call Super_Lockpick_Lock;
            end
            else begin
@@ -442,7 +435,6 @@ procedure damage_p_proc begin
    if (DOOR_STATUS == STATE_WOOD) then begin
        if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
            set_local_var(LVAR_Trapped, STATE_INACTIVE);
-           set_local_var(LVAR_Locked, STATE_INACTIVE);
            Trap_Damage:=random(MIN_DAMAGE,MAX_DAMAGE);
            explosion(self_tile, self_elevation, Trap_Damage);
            destroy_object(self_obj);
@@ -450,7 +442,6 @@ procedure damage_p_proc begin
 
        else begin
            set_local_var(LVAR_Trapped, STATE_INACTIVE);
-           set_local_var(LVAR_Locked, STATE_INACTIVE);
            destroy_object(self_obj);
        end
    end
@@ -460,14 +451,12 @@ procedure damage_p_proc begin
    else if (DOOR_STATUS == STATE_METAL) then begin
        set_local_var(LVAR_Explosion_Attempts,local_var(LVAR_Explosion_Attempts)+1);
        if (local_var(LVAR_Trapped) == STATE_ACTIVE) then begin
-           set_local_var(LVAR_Locked, STATE_INACTIVE);
            Trap_Damage:=random(MIN_DAMAGE,MAX_DAMAGE);
            explosion(self_tile, self_elevation, Trap_Damage);
        end
 
        else if (local_var(LVAR_Explosion_Attempts) > DOOR_STRENGTH) then begin
            set_local_var(LVAR_Trapped, STATE_INACTIVE);
-           set_local_var(LVAR_Locked,STATE_INACTIVE);
            destroy_object(self_obj);
        end
    end
@@ -488,19 +477,20 @@ end
 procedure map_enter_p_proc begin
 
 /* Set up the door state when the player first enters the map */
-   if (local_var(LVAR_Set_Door_Status) == 0) then begin
-       set_local_var(LVAR_Set_Door_Status,1);
-       set_local_var(LVAR_Locked,LOCKED_STATUS);
-       set_local_var(LVAR_Trapped,TRAPPED_STATUS);
-   end
+  if (is_loading_game == false) then begin
+    if (local_var(LVAR_Set_Door_Status) == 0) then begin
+        set_local_var(LVAR_Set_Door_Status,1);
+        set_local_var(LVAR_Trapped,TRAPPED_STATUS);
+    end
 
-   if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
-       obj_lock(self_obj);
-   end
+    if (LOCKED_STATUS == STATE_ACTIVE) then begin
+        obj_lock(self_obj);
+    end
 
-   else begin
-       obj_unlock(self_obj);
-   end
+    else begin
+        obj_unlock(self_obj);
+    end
+  end
 end
 
 
@@ -512,13 +502,6 @@ end
 **************************************************************************************/
 
 procedure map_update_p_proc begin
-   if (local_var(LVAR_Locked) == STATE_ACTIVE) then begin
-       obj_lock(self_obj);
-   end
-
-   else begin
-       obj_unlock(self_obj);
-   end
 end
 
 
@@ -1295,7 +1278,6 @@ end
 
 procedure Lockpick_Door begin
    if (is_success(Locks_Roll)) then begin
-       set_local_var(LVAR_Locked, STATE_INACTIVE);              // Door is unlocked
        obj_unlock(self_obj);                                    // engine unlock door
 
        if (source_obj == dude_obj) then begin
@@ -1372,7 +1354,6 @@ end
 
 procedure Lock_Door begin
    if (is_success(Locks_Roll)) then begin
-       set_local_var(LVAR_Locked, STATE_ACTIVE);                // Door is unlocked
        obj_lock(self_obj);                                      // engine unlock door
 
        if (source_obj == dude_obj) then begin
@@ -1412,7 +1393,6 @@ procedure Pry_Door begin
    Stat_Roll:=do_check(source_obj,STAT_st,Crowbar_Bonus);
 
    if (is_success(Stat_Roll)) then begin
-       set_local_var(LVAR_Locked, STATE_INACTIVE);
        obj_unlock(self_obj);
 
        if (source_obj == dude_obj) then begin
