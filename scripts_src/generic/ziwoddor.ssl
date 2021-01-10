@@ -1,7 +1,7 @@
 // generic wood door
 
 #ifndef SCRIPT_REALNAME
-#define SCRIPT_REALNAME "ziwoddor"
+  #define SCRIPT_REALNAME "ziwoddor"
 #endif
 
 #ifndef LOCKED_STATUS
@@ -12,7 +12,9 @@
 #define LOCK_STATUS                     STATE_STANDARD_LOCK
 #define CLOSE_STATUS                    STATE_DOOR_NOCLOSE
 
-#define Lock_Bonus                      (-20)
+#ifndef Lock_Bonus
+  #define Lock_Bonus                      (-20)
+#endif
 
 #define TIMER_CLOSE                     (1)
 #define LVAR_Locked                     (0) // for backwards compatibility of savegames
