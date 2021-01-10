@@ -15,5 +15,6 @@
 #define Lock_Bonus                      (-20)
 
 #define TIMER_CLOSE                     (1)
+#define LVAR_Locked                     (0) // for backwards compatibility of savegames
 
 #include "../template/gdoor.ssl"
