@@ -19,6 +19,11 @@
 ******************************************************************************************/
 
 
+/* Customizations:
+1. DOOR_KEY - if defined, allows to open and close the lock
+2. LVAR_Locked - for backwards compatibility of the savegames. Not used. If defined, shifts other LVARs by 1.
+*/
+
 /* Include Files */
 #include "../headers/define.h"
 
@@ -373,6 +378,26 @@ end
    made to find out what is being used, obj_pid(obj_being_used_with) will need to
    be checked against a prototype.
 **********************************************************************************/
+#ifdef DOOR_KEY
+procedure key_unlock_door begin
+    set_local_var(LVAR_Locked, STATE_INACTIVE);              // Door is unlocked
+    obj_unlock(self_obj);                                    // engine unlock door
+    script_overrides;
+    display_msg(mstr(300));
+end
+
+procedure key_lock_door begin
+    script_overrides;
+    if (obj_is_open(self_obj)) then
+        display_msg(mstr(302));
+    else begin
+        set_local_var(LVAR_Locked, STATE_ACTIVE);                // Door is unlocked
+        obj_lock(self_obj);                                      // engine unlock door
+        display_msg(mstr(301));
+    end
+end
+#endif
+
 #ifndef custom_use_obj_on_p_proc
 procedure use_obj_on_p_proc begin
    variable Tool;
@@ -380,6 +405,14 @@ procedure use_obj_on_p_proc begin
    Tool:=obj_pid(obj_being_used_with);
 
    if (LOCK_STATUS == STATE_STANDARD_LOCK) then begin
+        #ifdef DOOR_KEY
+            if (Tool == DOOR_KEY) then begin
+                script_overrides;
+                if self_locked then call key_unlock_door;
+                else call key_lock_door;
+            end
+        #endif
+
        if (Tool == PID_LOCKPICKS) then begin
            script_overrides; //added by killap
            if self_locked then begin
