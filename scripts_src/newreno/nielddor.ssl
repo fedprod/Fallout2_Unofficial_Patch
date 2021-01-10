@@ -30,14 +30,12 @@ procedure map_update_p_proc begin
    call check_map_update;
 end
 
-// added by killap
 procedure map_enter_p_proc begin
   // eldridge_open time
   if not((game_time_hour >= 600) and (game_time_hour <= 2100)) then
     obj_close(self_obj);
   call def_map_enter_p_proc;
 end
-// end added
 
 #define use_p_proc                        def_use_p_proc
 #define use_skill_on_p_proc               def_use_skill_on_p_proc

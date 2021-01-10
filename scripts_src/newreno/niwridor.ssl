@@ -20,19 +20,11 @@ procedure use_p_proc begin
    end
 end
 
-//edit by killap
 procedure use_skill_on_p_proc begin
    if (test_use_tamper == false) then begin
       call def_use_skill_on_p_proc;
    end
 end
-//end
-
-/*procedure use_skill_on_p_proc begin
-   if (test_use_tamper == false) then begin
-      call use_skill_on_p_proc;
-   end
-end*/
 
 procedure map_update_p_proc begin
    call my_map_update_proc;

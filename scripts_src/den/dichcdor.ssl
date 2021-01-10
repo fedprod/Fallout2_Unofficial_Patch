@@ -17,7 +17,6 @@ procedure def_use_skill_on_p_proc;
 procedure def_start;
 procedure def_map_enter_p_proc;
 procedure def_destroy_p_proc;
-procedure check_unlock_door;
 
 procedure test_use_tamper;
 procedure test_use_skill_tamper;
@@ -25,7 +24,6 @@ procedure check_timed_event;
 procedure check_close_door;
 
 procedure use_p_proc begin
-   call check_unlock_door;
    if (test_use_tamper == false) then begin
       call def_use_p_proc;
    end
@@ -80,13 +78,6 @@ procedure check_close_door begin
    if (obj_is_locked(self_obj) == false) then begin
       obj_lock(self_obj);
    end
-end
-
-procedure check_unlock_door begin
-   //this code doesn't make sense to me. How can a piece of scenery be part of a TEAM -- killap
-   /*if (get_team(source_obj) == TEAM_DEN_GANG_1) then begin
-      obj_unlock(self_obj);
-   end*/
 end
 
 procedure check_timed_event begin
